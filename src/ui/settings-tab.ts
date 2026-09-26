@@ -1,4 +1,15 @@
-import { ButtonComponent, FileSystemAdapter, Modal, Notice, Platform, PluginSettingTab, Setting, type App } from "obsidian";
+import {
+  ButtonComponent,
+  FileSystemAdapter,
+  FuzzySuggestModal,
+  Modal,
+  Notice,
+  Platform,
+  PluginSettingTab,
+  Setting,
+  type App,
+  type FuzzyMatch,
+} from "obsidian";
 import { DICTIONARY_CATALOG, type DownloadableDictionary } from "../dictionary/dictionary-catalog";
 import { readObsidianPersonalDictionary } from "../dictionary/obsidian-personal";
 import type EasySpellcheckPlugin from "../main";
@@ -23,7 +34,7 @@ class ConfirmDownloadModal extends Modal {
   override onOpen(): void {
     this.titleEl.setText(`Download ${this.dictionary.name}?`);
     this.contentEl.createEl("p", {
-      text: "This sends a request to GitHub and saves the Hunspell files, original license, and source record together in a local dictionary folder.",
+      text: "This sends a request to GitHub and saves the Hunspell files, upstream license information, and source record together in a local dictionary folder.",
     });
     const license = this.contentEl.createEl("p");
     license.appendText("Dictionary licenses vary by language. ");
@@ -37,6 +48,23 @@ class ConfirmDownloadModal extends Modal {
       }));
   }
   override onClose(): void { this.contentEl.empty(); }
+}
+
+class DictionaryPickerModal extends FuzzySuggestModal<DownloadableDictionary> {
+  constructor(app: App, private readonly choose: (dictionary: DownloadableDictionary) => void) {
+    super(app);
+    this.setPlaceholder("Search languages and regional variants");
+  }
+
+  getItems(): DownloadableDictionary[] { return [...DICTIONARY_CATALOG]; }
+  getItemText(dictionary: DownloadableDictionary): string { return `${dictionary.name} ${dictionary.id}`; }
+  onChooseItem(dictionary: DownloadableDictionary): void { this.choose(dictionary); }
+
+  override renderSuggestion({ item }: FuzzyMatch<DownloadableDictionary>, element: HTMLElement): void {
+    element.addClass("easy-spellcheck-language-option");
+    element.createDiv({ cls: "easy-spellcheck-language-name", text: item.name });
+    element.createDiv({ cls: "easy-spellcheck-language-code", text: item.id });
+  }
 }
 
 export class EasySpellcheckSettingsTab extends PluginSettingTab {
@@ -81,12 +109,17 @@ export class EasySpellcheckSettingsTab extends PluginSettingTab {
       }));
 
     new Setting(containerEl).setName("Dictionaries").setHeading();
-    new Setting(containerEl).setName("Download a language")
-      .setDesc("Download a UTF-8 dictionary from a pinned revision of wooorm's collection. A confirmation shows the source before connecting.")
-      .addDropdown((dropdown) => {
-        for (const dictionary of DICTIONARY_CATALOG) dropdown.addOption(dictionary.id, dictionary.name);
-        dropdown.setValue(this.downloadId).onChange((value) => { this.downloadId = value; });
-      })
+    const selectedDictionary = DICTIONARY_CATALOG.find(({ id }) => id === this.downloadId) ?? DICTIONARY_CATALOG[0];
+    new Setting(containerEl).setName("Download a dictionary")
+      .setDesc(selectedDictionary === undefined
+        ? "No downloadable dictionaries are available."
+        : `${selectedDictionary.name} · ${selectedDictionary.id}. Search all ${DICTIONARY_CATALOG.length} dictionaries from wooorm's pinned collection.`)
+      .addButton((button) => button.setButtonText("Choose language").onClick(() => {
+        new DictionaryPickerModal(this.app, (dictionary) => {
+          this.downloadId = dictionary.id;
+          this.display();
+        }).open();
+      }))
       .addButton((button) => button.setButtonText("Download").setCta().onClick(() => this.confirmDownload()));
     new Setting(containerEl).setName("Import dictionary files").setDesc("Choose matching .aff and .dic files, or a ZIP archive containing them.")
       .addButton((button) => button.setButtonText("Import files").onClick(() => this.pickDictionaries()));

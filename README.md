@@ -6,15 +6,15 @@ This repository is under active development. Version 0.1.0 is not ready for the 
 
 ## Dictionary setup
 
-The plugin does not bundle dictionaries. You can download a normalized UTF-8 language from a pinned revision of wooorm's dictionaries collection, supply Hunspell `.aff` and `.dic` files with the same basename, or import a ZIP archive containing matching pairs.
+The plugin does not bundle dictionaries. You can search and download any of the 92 normalized dictionaries in a pinned revision of wooorm's collection, supply Hunspell `.aff` and `.dic` files with the same basename, or import a ZIP archive containing matching pairs.
 
 1. Open Obsidian settings.
 2. Select **Easy Spellcheck**.
-3. Under **Dictionaries**, choose a language and select **Download**. Review the source and licensing notice before confirming.
+3. Under **Dictionaries**, select **Choose language**, search by language or locale, and select **Download**. Review the source and licensing notice before confirming.
 
 To use your own files, select **Import files** and choose a matching pair or ZIP archive instead.
 
-All successfully loaded dictionaries remain active. A word is accepted when any active dictionary recognizes it. Check the dictionary's license before downloading, importing, or redistributing it. New dictionaries use `dicts/<dictionary-id>/`. Downloads store the `.aff`, `.dic`, original license, and `SOURCE.json` record together. Existing flat dictionary pairs remain supported. The plugin never uploads dictionary files. A confirmed download requests the dictionary pair and its license from `raw.githubusercontent.com`.
+All successfully loaded dictionaries remain active. A word is accepted when any active dictionary recognizes it. Check the dictionary's license before downloading, importing, or redistributing it. New dictionaries use `dicts/<dictionary-id>/`. Downloads store the `.aff`, `.dic`, upstream license information, and `SOURCE.json` record together. Existing flat dictionary pairs remain supported. The plugin never uploads dictionary files. A confirmed download requests the dictionary pair and available license file from `raw.githubusercontent.com`.
 
 ## Corrections and navigation
 

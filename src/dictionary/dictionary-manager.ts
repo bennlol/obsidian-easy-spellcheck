@@ -77,7 +77,9 @@ export class DictionaryManager {
     const [aff, dic, license] = await Promise.all([
       this.downloadFile(dictionary.affUrl),
       this.downloadFile(dictionary.dicUrl),
-      this.downloadFile(dictionary.licenseUrl),
+      dictionary.licenseUrl === undefined
+        ? Promise.resolve(new TextEncoder().encode(dictionary.licenseText ?? "See SOURCE.json for license details."))
+        : this.downloadFile(dictionary.licenseUrl),
     ]);
     const decoded = decodeDictionaryPair(aff, dic);
     Spellchecker.createDictionary(decoded);
@@ -86,7 +88,7 @@ export class DictionaryManager {
       name: dictionary.name,
       downloadedAt: new Date().toISOString(),
       source: dictionary.sourceUrl,
-      files: { aff: dictionary.affUrl, dic: dictionary.dicUrl, license: dictionary.licenseUrl },
+      files: { aff: dictionary.affUrl, dic: dictionary.dicUrl, license: dictionary.licenseUrl ?? dictionary.licenseText },
     }, new TextDecoder().decode(license));
     await this.reload();
   }
