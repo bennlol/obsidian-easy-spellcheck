@@ -3,7 +3,6 @@ import {
   FuzzySuggestModal,
   Modal,
   Notice,
-  Platform,
   PluginSettingTab,
   Setting,
   type App,
@@ -131,20 +130,6 @@ export class EasySpellcheckSettingsTab extends PluginSettingTab {
           this.display();
         } catch (error) { this.owner.reportError("Could not reload dictionaries", error); }
       }));
-    if (Platform.isDesktop) {
-      const location = document.createDocumentFragment();
-      location.appendText("Stored inside the vault at ");
-      location.createEl("code", { text: this.owner.dictionaryManager.directory });
-      new Setting(containerEl).setName("Dictionary storage").setDesc(location)
-        .addButton((button) => button.setButtonText("Copy path").onClick(async () => {
-          try {
-            await navigator.clipboard.writeText(this.owner.dictionaryManager.directory);
-            new Notice("Dictionary path copied.");
-          } catch (error) {
-            this.owner.reportError("Could not copy the dictionary path", error);
-          }
-        }));
-    }
     for (const dictionary of this.owner.dictionaryManager.list()) {
       const status = dictionary.status === "loaded"
         ? `Loaded, about ${dictionary.wordCount.toLocaleString()} words`
