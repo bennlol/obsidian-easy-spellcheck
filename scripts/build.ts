@@ -8,7 +8,7 @@ const options: BuildOptions = {
   format: "cjs",
   platform: "browser",
   target: "es2022",
-  external: ["obsidian", "electron", "@codemirror/state", "@codemirror/view", "@codemirror/language"],
+  external: ["obsidian", "@codemirror/state", "@codemirror/view", "@codemirror/language"],
   minify: !watch,
   sourcemap: watch ? "linked" : false,
   logLevel: "info",

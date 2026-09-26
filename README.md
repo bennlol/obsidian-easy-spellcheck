@@ -31,7 +31,7 @@ The plugin defines no default hotkeys. The previous and next commands scan the f
 
 ## Personal words
 
-The personal dictionary is stored as `dicts/personal.txt`, one NFC-normalized word per line. Use the settings preview to paste several words or load a text file. On desktop, **Load Obsidian words** reads the built-in `Custom Dictionary.txt` into the preview without changing the source file. Obsidian does not expose that host-level file to mobile plugins, so mobile users can import a text file instead. The preview separates valid entries, duplicates, and invalid entries before it writes anything. **Undo last add** removes the most recent nonempty batch added during the current plugin session.
+The personal dictionary is stored as `dicts/personal.txt`, one NFC-normalized word per line. Use the settings preview to paste several words or load a text file. The preview separates valid entries, duplicates, and invalid entries before it writes anything. **Undo last add** removes the most recent nonempty batch added during the current plugin session.
 
 ## Settings
 

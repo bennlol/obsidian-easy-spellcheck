@@ -1,6 +1,5 @@
 import {
   ButtonComponent,
-  FileSystemAdapter,
   FuzzySuggestModal,
   Modal,
   Notice,
@@ -11,7 +10,6 @@ import {
   type FuzzyMatch,
 } from "obsidian";
 import { DICTIONARY_CATALOG, type DownloadableDictionary } from "../dictionary/dictionary-catalog";
-import { readObsidianPersonalDictionary } from "../dictionary/obsidian-personal";
 import type EasySpellcheckPlugin from "../main";
 
 class ConfirmRemovalModal extends Modal {
@@ -134,8 +132,18 @@ export class EasySpellcheckSettingsTab extends PluginSettingTab {
         } catch (error) { this.owner.reportError("Could not reload dictionaries", error); }
       }));
     if (Platform.isDesktop) {
-      new Setting(containerEl).setName("Open dictionary folder").setDesc("Open the plugin-managed dictionary folder.")
-        .addButton((button) => button.setButtonText("Show folder").onClick(() => { void this.openDictionaryFolder(); }));
+      const location = document.createDocumentFragment();
+      location.appendText("Stored inside the vault at ");
+      location.createEl("code", { text: this.owner.dictionaryManager.directory });
+      new Setting(containerEl).setName("Dictionary storage").setDesc(location)
+        .addButton((button) => button.setButtonText("Copy path").onClick(async () => {
+          try {
+            await navigator.clipboard.writeText(this.owner.dictionaryManager.directory);
+            new Notice("Dictionary path copied.");
+          } catch (error) {
+            this.owner.reportError("Could not copy the dictionary path", error);
+          }
+        }));
     }
     for (const dictionary of this.owner.dictionaryManager.list()) {
       const status = dictionary.status === "loaded"
@@ -177,18 +185,6 @@ export class EasySpellcheckSettingsTab extends PluginSettingTab {
     const importActions = header.createDiv({ cls: "easy-spellcheck-personal-imports" });
     importActions.createSpan({ cls: "easy-spellcheck-personal-import-label", text: "Import from" });
     new ButtonComponent(importActions).setButtonText("Text file").onClick(() => this.pickPersonalFile());
-    if (Platform.isDesktop) {
-      new ButtonComponent(importActions).setButtonText("Obsidian").onClick(async () => {
-        try {
-          const result = await readObsidianPersonalDictionary();
-          this.bulkInput = result.words.join("\n");
-          new Notice(`Loaded ${result.words.length} words from Obsidian. Review them before adding.`);
-          this.display();
-        } catch (error) {
-          this.owner.reportError("Could not read Obsidian's personal dictionary", error);
-        }
-      });
-    }
     const inputId = "easy-spellcheck-personal-input";
     panel.createEl("label", { cls: "easy-spellcheck-personal-label", text: "Words to add", attr: { for: inputId } });
     const input = panel.createEl("textarea", {
@@ -302,20 +298,4 @@ export class EasySpellcheckSettingsTab extends PluginSettingTab {
     input.click();
   }
 
-  private openDictionaryFolder(): void {
-    if (!Platform.isDesktop) return;
-    const adapter = this.app.vault.adapter;
-    if (!(adapter instanceof FileSystemAdapter)) return;
-    try {
-      // Electron is available only in Obsidian's desktop CommonJS runtime.
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { shell } = require("electron") as { shell: { openPath(path: string): Promise<string> } };
-      const fullPath = adapter.getFullPath(this.owner.dictionaryManager.directory);
-      void shell.openPath(fullPath).then((error) => {
-        if (error) new Notice(`Could not open the dictionary folder: ${error}`);
-      });
-    } catch (error) {
-      this.owner.reportError("Could not open the dictionary folder", error);
-    }
-  }
 }

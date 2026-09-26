@@ -15,7 +15,7 @@ Record the Obsidian version, operating system, plugin commit, and dictionary sou
 - [ ] An incomplete or corrupt pair produces a useful notice.
 - [ ] A corrupt pair does not disable another loaded dictionary.
 - [ ] Removing a dictionary asks for confirmation and removes both files.
-- [ ] Open dictionary folder appears only on desktop.
+- [ ] The vault-relative dictionary path appears only on desktop and copies correctly.
 
 ## Editor behavior
 
@@ -41,7 +41,6 @@ Record the Obsidian version, operating system, plugin commit, and dictionary sou
 
 - [ ] Bulk preview reports valid, duplicate, and invalid entries correctly.
 - [ ] Text-file import fills the preview without writing immediately.
-- [ ] Desktop Obsidian dictionary import removes the checksum line and fills the preview without changing the source file.
 - [ ] Added words persist across restart and refresh every open editor.
 - [ ] Undo removes the full most recent batch and disappears after use or reload.
 
