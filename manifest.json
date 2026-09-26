@@ -1,0 +1,9 @@
+{
+  "id": "easy-spellcheck",
+  "name": "Easy Spellcheck",
+  "version": "0.1.0",
+  "minAppVersion": "1.6.0",
+  "description": "Fast offline spellchecking with user-supplied Hunspell dictionaries.",
+  "author": "Benjamin",
+  "isDesktopOnly": false
+}

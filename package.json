@@ -1,0 +1,36 @@
+{
+  "name": "obsidian-easy-spellcheck",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.4.0",
+  "scripts": {
+    "dev": "bun run scripts/build.ts --watch",
+    "build": "bun run typecheck && bun run bundle",
+    "bundle": "bun run scripts/build.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "bun test",
+    "check": "bun run typecheck && bun run lint && bun run test && bun run bundle"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2",
+    "nspell": "^2.1.5"
+  },
+  "devDependencies": {
+    "@codemirror/lang-markdown": "^6.3.4",
+    "@codemirror/language": "^6.11.3",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.2",
+    "@lezer/common": "^1.2.3",
+    "@eslint/js": "^9.36.0",
+    "@types/bun": "^1.2.22",
+    "esbuild": "^0.25.10",
+    "eslint": "^9.36.0",
+    "eslint-plugin-obsidianmd": "^0.1.9",
+    "globals": "^16.4.0",
+    "obsidian": "1.10.3",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.1"
+  }
+}

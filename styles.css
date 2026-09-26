@@ -1,0 +1,54 @@
+.easy-spellcheck-misspelling {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--text-error);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.easy-spellcheck-status-error { color: var(--text-error); }
+.easy-spellcheck-status-loaded { color: var(--text-success); }
+.easy-spellcheck-personal-panel {
+  padding: var(--size-4-4);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background: var(--background-secondary);
+}
+.easy-spellcheck-personal-header,
+.easy-spellcheck-personal-footer,
+.easy-spellcheck-personal-imports,
+.easy-spellcheck-personal-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+}
+.easy-spellcheck-personal-header,
+.easy-spellcheck-personal-footer { justify-content: space-between; }
+.easy-spellcheck-personal-header { align-items: flex-start; flex-wrap: wrap; }
+.easy-spellcheck-personal-count { font-weight: var(--font-semibold); }
+.easy-spellcheck-personal-help,
+.easy-spellcheck-personal-status,
+.easy-spellcheck-personal-import-label { color: var(--text-muted); }
+.easy-spellcheck-personal-help { margin-top: var(--size-4-1); max-width: 34rem; }
+.easy-spellcheck-personal-imports { flex-wrap: wrap; }
+.easy-spellcheck-personal-label {
+  display: block;
+  margin: var(--size-4-4) 0 var(--size-4-2);
+  font-weight: var(--font-medium);
+}
+.easy-spellcheck-personal-input {
+  display: block;
+  width: 100%;
+  min-height: 7rem;
+  resize: vertical;
+}
+.easy-spellcheck-personal-footer { margin-top: var(--size-4-3); flex-wrap: wrap; }
+.easy-spellcheck-personal-status { flex: 1 1 16rem; }
+.easy-spellcheck-personal-actions { margin-left: auto; }
+@media (max-width: 600px) {
+  .easy-spellcheck-personal-header,
+  .easy-spellcheck-personal-footer { align-items: stretch; flex-direction: column; }
+  .easy-spellcheck-personal-imports,
+  .easy-spellcheck-personal-actions { justify-content: flex-end; margin-left: 0; }
+}
+.easy-spellcheck-suggestion-word { font-weight: var(--font-semibold); }
