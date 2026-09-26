@@ -12,6 +12,39 @@ const REVISION = "8cfea406b505e4d7df52d5a19bce525df98c54ab";
 const RAW_ROOT = `https://raw.githubusercontent.com/wooorm/dictionaries/${REVISION}/dictionaries`;
 const SOURCE_ROOT = `https://github.com/wooorm/dictionaries/tree/${REVISION}/dictionaries`;
 
+const DEFAULT_DICTIONARY_ID = "en";
+const LOCALE_DICTIONARY_IDS: Readonly<Record<string, string>> = {
+  en: "en",
+  "en-us": "en",
+  "en-gb": "en-GB",
+  "en-au": "en-AU",
+  "en-ca": "en-CA",
+  "en-za": "en-ZA",
+  de: "de",
+  "de-de": "de",
+  "de-at": "de-AT",
+  "de-ch": "de-CH",
+  es: "es",
+  "es-es": "es",
+  "es-ar": "es-AR",
+  "es-mx": "es-MX",
+  "es-us": "es-US",
+  fr: "fr",
+  "fr-fr": "fr",
+  "fr-ca": "fr",
+  it: "it",
+  "it-it": "it",
+  nl: "nl",
+  "nl-nl": "nl",
+  pl: "pl",
+  "pl-pl": "pl",
+  pt: "pt",
+  "pt-br": "pt",
+  "pt-pt": "pt-PT",
+  ru: "ru",
+  "ru-ru": "ru",
+};
+
 function entry(id: string, name: string, licenseText?: string): DownloadableDictionary {
   const root = `${RAW_ROOT}/${id}`;
   return {
@@ -119,3 +152,21 @@ export const DICTIONARY_CATALOG: readonly DownloadableDictionary[] = [
   entry("uk", "Ukrainian"),
   entry("vi", "Vietnamese"),
 ];
+
+export function defaultDictionaryId(appLanguage: string, systemLocale?: string): string {
+  const app = normalizeLocale(appLanguage);
+  const system = normalizeLocale(systemLocale ?? "");
+  const configured = LOCALE_DICTIONARY_IDS[app];
+  if (app.includes("-") && configured !== undefined) return configured;
+  const appBase = app.split("-", 1)[0];
+  const systemBase = system.split("-", 1)[0];
+  if (appBase !== undefined && appBase === systemBase) {
+    const regional = LOCALE_DICTIONARY_IDS[system];
+    if (regional !== undefined) return regional;
+  }
+  return configured ?? DEFAULT_DICTIONARY_ID;
+}
+
+function normalizeLocale(locale: string): string {
+  return locale.trim().replaceAll("_", "-").toLocaleLowerCase();
+}

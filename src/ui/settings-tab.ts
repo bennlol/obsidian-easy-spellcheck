@@ -1,6 +1,7 @@
 import {
   ButtonComponent,
   FuzzySuggestModal,
+  getLanguage,
   Modal,
   Notice,
   PluginSettingTab,
@@ -8,7 +9,7 @@ import {
   type App,
   type FuzzyMatch,
 } from "obsidian";
-import { DICTIONARY_CATALOG, type DownloadableDictionary } from "../dictionary/dictionary-catalog";
+import { defaultDictionaryId, DICTIONARY_CATALOG, type DownloadableDictionary } from "../dictionary/dictionary-catalog";
 import type EasySpellcheckPlugin from "../main";
 
 class ConfirmRemovalModal extends Modal {
@@ -67,10 +68,11 @@ class DictionaryPickerModal extends FuzzySuggestModal<DownloadableDictionary> {
 export class EasySpellcheckSettingsTab extends PluginSettingTab {
   private bulkInput = "";
   private undoBatch: string[] = [];
-  private downloadId = DICTIONARY_CATALOG[0]?.id ?? "";
+  private downloadId: string;
 
   constructor(app: App, private readonly owner: EasySpellcheckPlugin) {
     super(app, owner);
+    this.downloadId = defaultDictionaryId(getLanguage(), navigator.language);
     owner.dictionaryManager.onReload(() => { this.undoBatch = []; });
   }
 
