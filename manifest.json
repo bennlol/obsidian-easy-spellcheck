@@ -5,5 +5,5 @@
   "minAppVersion": "1.6.0",
   "description": "Fast offline spellchecking with user-supplied Hunspell dictionaries.",
   "author": "Benjamin",
-  "isDesktopOnly": true
+  "isDesktopOnly": false
 }

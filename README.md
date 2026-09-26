@@ -1,8 +1,8 @@
 # Easy Spellcheck
 
-Easy Spellcheck is a local spellchecker for Obsidian on desktop. It underlines misspellings in Markdown prose, offers corrections, and supports a keyboard-only review loop. The plugin has no accounts or telemetry. Spellchecking never sends note text over the network.
+Easy Spellcheck is a local spellchecker for Obsidian on desktop, Android, and iOS. It underlines misspellings in Markdown prose, offers corrections, and supports a keyboard-only review loop. The plugin has no accounts or telemetry. Spellchecking never sends note text over the network.
 
-This repository is under active development. Version 0.1.0 is not ready for the Obsidian Community directory until the manual checks in [MANUAL-TESTS.md](MANUAL-TESTS.md) pass.
+This repository is under active development. Version 0.1.0 is not ready for the Obsidian Community directory until the manual desktop and mobile checks in [MANUAL-TESTS.md](MANUAL-TESTS.md) pass.
 
 ## Dictionary setup
 
@@ -18,7 +18,7 @@ All successfully loaded dictionaries remain active. A word is accepted when any 
 
 ## Corrections and navigation
 
-Open the editor context menu on an underlined word to choose one of up to five corrections or add the word to your personal dictionary. You can also run **Show spelling suggestions** from the command palette.
+Open the editor context menu on an underlined word to choose one of up to five corrections or add the word to your personal dictionary. On touch devices, run **Show spelling suggestions** from the command palette or mobile toolbar.
 
 For keyboard-only review, assign your own hotkeys in Obsidian's Hotkeys settings:
 
@@ -54,7 +54,7 @@ If a correction disappears before it is applied, the document changed after the 
 
 ## Screenshots
 
-Desktop screenshots will be captured from the beta build after the manual test matrix passes. The project does not use generated mockups in place of tested Obsidian screens.
+Desktop and mobile screenshots will be captured from the beta build after the manual test matrix passes. The project does not use generated mockups in place of tested Obsidian screens.
 
 ## Development
 

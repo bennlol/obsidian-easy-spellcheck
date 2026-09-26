@@ -5,8 +5,10 @@ Record the Obsidian version, operating system, plugin commit, and dictionary sou
 ## Installation and storage
 
 - [ ] A clean desktop install opens without console errors and prompts for a dictionary.
-- [ ] A ZIP containing a matching pair imports successfully.
-- [ ] Each catalog language downloads after confirmation.
+- [ ] Android can import a matching `.aff` and `.dic` pair.
+- [ ] iOS can import a matching `.aff` and `.dic` pair.
+- [ ] Desktop and mobile can import a ZIP containing a matching pair.
+- [ ] Desktop and mobile can download each catalog language after confirmation.
 - [ ] Cancelling the download confirmation makes no network request.
 - [ ] A failed or oversized download leaves no partial dictionary pair.
 - [ ] Imported dictionaries survive an Obsidian restart.
@@ -27,11 +29,12 @@ Record the Obsidian version, operating system, plugin commit, and dictionary sou
 ## Corrections and navigation
 
 - [ ] Context-menu suggestions replace the complete word and restore focus.
-- [ ] The suggestions dialog works with mouse, arrow keys, Enter, and Escape.
+- [ ] The suggestions dialog works with touch, mouse, arrow keys, Enter, Escape, and mobile back.
 - [ ] A stale suggestions dialog cannot replace changed text.
 - [ ] Next and previous navigation select, reveal, and wrap around misspellings.
 - [ ] Replacements of different lengths do not break later navigation.
 - [ ] The full keyboard-only correction workflow works with no default hotkeys.
+- [ ] Commands added to the mobile toolbar work with software and hardware keyboards.
 
 ## Personal words
 
@@ -48,4 +51,4 @@ Record the Obsidian version, operating system, plugin commit, and dictionary sou
 - [ ] The draft release has loose `main.js`, `manifest.json`, and `styles.css` assets.
 - [ ] A clean vault loads without console errors or startup network requests.
 - [ ] Spellchecking and correction commands never make network requests.
-- [ ] Capture current desktop screenshots for the README.
+- [ ] Capture current desktop and mobile screenshots for the README.
