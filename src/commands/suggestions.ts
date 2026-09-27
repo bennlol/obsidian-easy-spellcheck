@@ -13,6 +13,20 @@ export function targetForEditor(editor: Editor, spelling: DocumentSpelling): Cor
 }
 
 export function openSuggestions(plugin: EasySpellcheckPlugin, editor: Editor): void {
+  const target = misspelledTarget(plugin, editor);
+  if (!target) return;
+  new SpellingSuggestionsModal(plugin.app, editor, target, plugin.spellchecker, (message) => new Notice(message)).open();
+}
+
+export function correctWithTopSuggestion(plugin: EasySpellcheckPlugin, editor: Editor): void {
+  const target = misspelledTarget(plugin, editor);
+  if (!target) return;
+  const suggestion = plugin.spellchecker.suggest(target.range.text, 1)[0];
+  if (!suggestion) { new Notice(`No suggestions found for "${target.range.text}".`); return; }
+  replace(editor, target, suggestion);
+}
+
+function misspelledTarget(plugin: EasySpellcheckPlugin, editor: Editor): CorrectionTarget | undefined {
   if (!plugin.settings.enabled) { new Notice("Spellchecking is disabled."); return; }
   if (plugin.spellchecker.dictionaryCount === 0) { new Notice("No dictionaries are loaded."); return; }
   const target = targetForEditor(editor, new DocumentSpelling(plugin.spellchecker));
@@ -22,7 +36,7 @@ export function openSuggestions(plugin: EasySpellcheckPlugin, editor: Editor): v
   }
   if (!isProseTarget(plugin, target.range)) { new Notice("The cursor is not on checked prose."); return; }
   if (plugin.spellchecker.check(target.range.text)) { new Notice(`"${target.range.text}" is spelled correctly.`); return; }
-  new SpellingSuggestionsModal(plugin.app, editor, target, plugin.spellchecker, (message) => new Notice(message)).open();
+  return target;
 }
 
 export function addContextMenu(plugin: EasySpellcheckPlugin, menu: Menu, editor: Editor): void {
@@ -32,7 +46,7 @@ export function addContextMenu(plugin: EasySpellcheckPlugin, menu: Menu, editor:
   const suggestions = plugin.spellchecker.suggest(target.range.text, 5);
   if (suggestions.length === 0) menu.addItem((item) => item.setTitle("No suggestions found").setDisabled(true));
   for (const suggestion of suggestions) {
-    menu.addItem((item) => item.setTitle(suggestion).onClick(() => replace(editor, target, suggestion)));
+    menu.addItem((item) => item.setTitle(`Suggestion: ${suggestion}`).onClick(() => replace(editor, target, suggestion)));
   }
   menu.addSeparator();
   menu.addItem((item) => item.setTitle(`Add "${target.range.text}" to personal dictionary`).onClick(async () => {

@@ -18,7 +18,9 @@ All successfully loaded dictionaries remain active. A word is accepted when any 
 
 ## Corrections and navigation
 
-Open the editor context menu on an underlined word to choose one of up to five corrections or add the word to your personal dictionary. On touch devices, run **Show spelling suggestions** from the command palette or mobile toolbar.
+Open the editor context menu on an underlined word to choose one of up to five entries labeled **Suggestion: word**, or add the word to your personal dictionary. On touch devices, run **Show spelling suggestions** from the command palette or mobile toolbar.
+
+Suggestions from all loaded dictionaries are ranked together. For similarly cased words, an adjacent letter swap ranks ahead of a single added, missing, or replaced letter. Suggestions with equal scores keep their dictionary order. The fuzzy fallback is used when dictionaries return fewer suggestions than the configured threshold.
 
 For keyboard-only review, assign your own hotkeys in Obsidian's Hotkeys settings:
 
@@ -27,7 +29,7 @@ For keyboard-only review, assign your own hotkeys in Obsidian's Hotkeys settings
 3. Choose a correction with the arrow keys and Enter.
 4. Run **Go to next misspelling** again.
 
-The plugin defines no default hotkeys. The previous and next commands scan the full active document and wrap at either end. Live underlines scan visible editor ranges only.
+To correct the word at the cursor in one step, assign a hotkey to **Correct word with top suggestion**. It also works on a complete word selected by **Go to next misspelling**. The plugin defines no default hotkeys. The previous and next commands scan the full active document and wrap at either end. Live underlines scan visible editor ranges only.
 
 ## Personal words
 
@@ -79,7 +81,7 @@ bun run bundle     # create the ignored main.js release asset
 
 ## Releases
 
-Update `package.json`, `manifest.json`, and `versions.json` together. Tag the commit as `v<version>`. The release workflow verifies the versions, runs the full check, and creates a draft GitHub release containing `main.js`, `manifest.json`, and `styles.css`. Inspect the draft and test its loose assets in a clean vault before publishing it.
+Update `package.json`, `manifest.json`, and `versions.json` together. Tag the commit with the exact version, for example `0.1.0`. The release workflow verifies the versions, runs the full check, and creates a draft GitHub release containing `main.js`, `manifest.json`, and `styles.css`. Inspect the draft and test its loose assets in a clean vault before publishing it.
 
 ## Issues and contributions
 

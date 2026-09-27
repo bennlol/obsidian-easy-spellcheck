@@ -7,6 +7,7 @@ import { wordsIn } from "../spelling/normalization";
 
 const EXCLUDED_NODE = /(?:Frontmatter|YAML|FencedCode|CodeBlock|InlineCode|CodeText|URL|LinkDestination|HTML|Comment|Embed|Hashtag|PropertyName|(?:^|[-_])Tag(?:$|[-_]))/i;
 const URL_PATTERN = /(?:https?|ftp):\/\/[^\s<>()]+|www\.[^\s<>()]+/giu;
+const WIKILINK_PATTERN = /(!?)\[\[([^\]\n]+)\]\]/gu;
 
 function isExcluded(node: SyntaxNode): boolean {
   for (let current: SyntaxNode | null = node; current; current = current.parent) {
@@ -46,17 +47,27 @@ export class DocumentSpelling {
     }
     for (const range of merged) {
       const text = state.doc.sliceString(range.from, range.to);
-      const urls: Array<{ from: number; to: number }> = [];
+      const excludedRanges: Array<{ from: number; to: number }> = [];
       URL_PATTERN.lastIndex = 0;
       for (const match of text.matchAll(URL_PATTERN)) {
-        if (match.index !== undefined) urls.push({ from: range.from + match.index, to: range.from + match.index + match[0].length });
+        if (match.index !== undefined) excludedRanges.push({ from: range.from + match.index, to: range.from + match.index + match[0].length });
       }
-      let urlIndex = 0;
+      WIKILINK_PATTERN.lastIndex = 0;
+      for (const match of text.matchAll(WIKILINK_PATTERN)) {
+        if (match.index === undefined) continue;
+        const from = range.from + match.index;
+        const target = match[2]?.split("|", 1)[0] ?? "";
+        excludedRanges.push(match[1]
+          ? { from, to: from + match[0].length }
+          : { from: from + 2, to: from + 2 + target.length });
+      }
+      excludedRanges.sort((left, right) => left.from - right.from);
+      let excludedIndex = 0;
       for (const word of wordsIn(text, range.from)) {
-        while ((urls[urlIndex]?.to ?? Number.POSITIVE_INFINITY) <= word.from) urlIndex += 1;
-        const url = urls[urlIndex];
-        const inUrl = url !== undefined && word.from >= url.from && word.to <= url.to;
-        if (!inUrl && !isExcluded(tree.resolveInner(word.from, 1))) result.push(word);
+        while ((excludedRanges[excludedIndex]?.to ?? Number.POSITIVE_INFINITY) <= word.from) excludedIndex += 1;
+        const excluded = excludedRanges[excludedIndex];
+        const inExcludedRange = excluded !== undefined && word.from >= excluded.from && word.to <= excluded.to;
+        if (!inExcludedRange && !isExcluded(tree.resolveInner(word.from, 1))) result.push(word);
       }
     }
     return result;

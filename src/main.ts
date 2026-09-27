@@ -1,6 +1,6 @@
 import { Notice, Plugin, type Editor, type Menu } from "obsidian";
 import { navigateMisspelling } from "./commands/navigation";
-import { addContextMenu, openSuggestions } from "./commands/suggestions";
+import { addContextMenu, correctWithTopSuggestion, openSuggestions } from "./commands/suggestions";
 import { DictionaryManager } from "./dictionary/dictionary-manager";
 import { createDecorationController, type DecorationController } from "./editor/decorations";
 import { Spellchecker } from "./spelling/spellchecker";
@@ -58,6 +58,7 @@ export default class EasySpellcheckPlugin extends Plugin {
     this.addCommand({ id: "next-misspelling", name: "Go to next misspelling", editorCallback: (editor) => navigateMisspelling(this, editor, 1) });
     this.addCommand({ id: "previous-misspelling", name: "Go to previous misspelling", editorCallback: (editor) => navigateMisspelling(this, editor, -1) });
     this.addCommand({ id: "show-suggestions", name: "Show spelling suggestions", editorCallback: (editor) => openSuggestions(this, editor) });
+    this.addCommand({ id: "correct-with-top-suggestion", name: "Correct word with top suggestion", editorCallback: (editor) => correctWithTopSuggestion(this, editor) });
     this.addCommand({ id: "reload-dictionaries", name: "Reload dictionaries", callback: async () => {
       try {
         const result = await this.dictionaryManager.reload();

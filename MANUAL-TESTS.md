@@ -34,6 +34,7 @@ Record the Obsidian version, operating system, plugin commit, and dictionary sou
 - [ ] Next and previous navigation select, reveal, and wrap around misspellings.
 - [ ] Replacements of different lengths do not break later navigation.
 - [ ] The full keyboard-only correction workflow works with no default hotkeys.
+- [ ] The top-suggestion command corrects a word under the cursor or selected by navigation, and leaves text unchanged when no suggestion exists.
 - [ ] Commands added to the mobile toolbar work with software and hardware keyboards.
 
 ## Personal words

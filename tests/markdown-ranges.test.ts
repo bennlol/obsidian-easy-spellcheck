@@ -20,4 +20,14 @@ describe("Markdown prose ranges", () => {
     const words = checkedWords("before `inline code` after\n\n```js\ninside fence\n```\n\n<div>hidden html</div>\n\nhttps://example.com/path");
     expect(words).toEqual(["before", "after"]);
   });
+
+  test("excludes wiki link targets and embeds while checking visible aliases", () => {
+    const words = checkedWords("before [[Lazar - Attention, Moral Skill, and Algorithmic Recommendation.pdf]] [[xyz.pdf|report title]] ![[image.pdf|thumbnail]] after");
+    expect(words).toEqual(["before", "report", "title", "after"]);
+  });
+
+  test("checks ordinary link labels but excludes their destinations", () => {
+    expect(checkedWords("[report title](xyz.pdf) [xyz.pdf](other.pdf)"))
+      .toEqual(["report", "title", "xyz", "pdf"]);
+  });
 });

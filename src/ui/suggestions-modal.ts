@@ -34,7 +34,7 @@ export class SpellingSuggestionsModal extends SuggestModal<Choice> {
   }
 
   renderSuggestion(choice: Choice, element: HTMLElement): void {
-    element.setText(choice.text);
+    element.setText(choice.kind === "suggestion" ? `Suggestion: ${choice.text}` : choice.text);
     if (choice.kind === "empty") element.addClass("is-disabled");
   }
 

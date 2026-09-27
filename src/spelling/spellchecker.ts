@@ -63,22 +63,29 @@ export class Spellchecker implements SpellcheckerSnapshot {
 
   suggest(raw: string, limit = 5): string[] {
     const cappedLimit = Math.max(0, Math.min(5, limit));
+    if (cappedLimit === 0) return [];
     const { lookup, possessive } = splitPossessive(raw);
-    const unique = new Map<string, string>();
+    const unique = new Map<string, { word: string; distance: number; rank: number }>();
     for (const dictionary of this.dictionaries) {
-      for (const candidate of dictionary.suggest(lookup)) {
+      for (const [rank, candidate] of dictionary.suggest(lookup).entries()) {
         const displayed = applyInputCase(lookup, normalizeWord(candidate));
-        if (!unique.has(canonicalWord(displayed))) unique.set(canonicalWord(displayed), displayed);
-        if (unique.size >= cappedLimit) break;
+        const key = canonicalWord(displayed);
+        const previous = unique.get(key);
+        if (!previous || rank < previous.rank) {
+          unique.set(key, { word: displayed, distance: suggestionDistance(lookup, displayed), rank });
+        }
       }
     }
     if (this.fallbackThreshold > 0 && unique.size < this.fallbackThreshold) {
       for (const candidate of this.fallback(lookup)) {
-        if (!unique.has(canonicalWord(candidate))) unique.set(canonicalWord(candidate), candidate);
-        if (unique.size >= cappedLimit) break;
+        const key = canonicalWord(candidate);
+        if (!unique.has(key)) unique.set(key, { word: candidate, distance: suggestionDistance(lookup, candidate), rank: Number.POSITIVE_INFINITY });
       }
     }
-    return [...unique.values()].slice(0, cappedLimit).map((candidate) => `${candidate}${possessive}`);
+    return [...unique.values()]
+      .sort((left, right) => left.distance - right.distance || left.rank - right.rank)
+      .slice(0, cappedLimit)
+      .map(({ word }) => `${word}${possessive}`);
   }
 
   async addPersonalWord(raw: string): Promise<AddWordResult> {
@@ -106,4 +113,10 @@ export class Spellchecker implements SpellcheckerSnapshot {
     }
     return ranked.map(({ word }) => word);
   }
+}
+
+function suggestionDistance(input: string, candidate: string): number {
+  const distance = editDistanceAtMostTwo(canonicalWord(input), canonicalWord(candidate));
+  if (distance === undefined) return Number.POSITIVE_INFINITY;
+  return distance + (input === input.toLocaleLowerCase() && candidate !== candidate.toLocaleLowerCase() ? 0.5 : 0);
 }

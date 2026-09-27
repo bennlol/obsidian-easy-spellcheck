@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import type { NSpell } from "nspell";
 import { Spellchecker } from "../src/spelling/spellchecker";
 
 const aff = "SET UTF-8\nTRY abcdefghijklmnopqrstuvwxyz\nSFX S Y 1\nSFX S 0 s .\n";
@@ -31,6 +32,29 @@ describe("spellchecker", () => {
     spellchecker.fallbackThreshold = 1;
     spellchecker.replace([], ["cot", "cut", "cats", "cat"], []);
     expect(spellchecker.suggest("cet")).toEqual(["cat", "cot", "cut", "cats"]);
+  });
+
+  test("ranks a swapped-letter correction from a later dictionary above earlier suggestions", () => {
+    const first: NSpell = { correct: () => false, suggest: () => ["add", "ado", "adz", "ad", "adj", "adv"], add: () => {} };
+    const second: NSpell = { correct: () => false, suggest: () => ["and"], add: () => {} };
+    const spellchecker = new Spellchecker();
+    spellchecker.replace([first, second], [], []);
+    expect(spellchecker.suggest("adn", 1)).toEqual(["and"]);
+    expect(spellchecker.suggest("adn", 5)).toContain("and");
+  });
+
+  test("keeps dictionary ranking for corrections with equal edit cost", () => {
+    const dictionary: NSpell = { correct: () => false, suggest: () => ["cut", "cat"], add: () => {} };
+    const spellchecker = new Spellchecker();
+    spellchecker.replace([dictionary], [], []);
+    expect(spellchecker.suggest("cet")).toEqual(["cut", "cat"]);
+  });
+
+  test("ranks a lowercase suggestion ahead of an equally close acronym", () => {
+    const dictionary: NSpell = { correct: () => false, suggest: () => ["ETH", "the"], add: () => {} };
+    const spellchecker = new Spellchecker();
+    spellchecker.replace([dictionary], [], []);
+    expect(spellchecker.suggest("teh")).toEqual(["the", "ETH"]);
   });
 
   test("adds personal words through persistence callback", async () => {
